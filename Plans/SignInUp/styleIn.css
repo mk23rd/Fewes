@@ -1,0 +1,269 @@
+*{
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+
+a{
+    text-decoration: none;
+    color: inherit;
+}
+
+
+.nav-plans{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 70px;
+    position: fixed;
+    /* left: 220px; */
+    left: 45%;
+    top: 10px;
+}
+
+.plans-left{
+    display: flex;
+}
+
+.title-plans{
+    font-family: Ethiopic Hiwua;
+    color: #51A136;
+    font-size: 75px;
+}
+
+.plans-right{
+    display: flex;
+}
+
+.check-plans{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    position: relative;
+    right: 42px;
+}
+
+.check-plans-circle{
+    height: 35px;
+    width: 35px;
+    border: 3px solid #45A62F;
+    border-radius: 50%;
+    display: inline-block;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #45A62F;
+    font-size: 25px;
+    font-family: Rockwell;
+}
+
+.check-plans-words{
+    font-family: Rockwell;
+    color: #45A62F;
+}
+
+.registration{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    position: relative;
+}
+
+.registration-circle{
+    height: 35px;
+    width: 35px;
+    border: 3px solid #45A62F;
+    border-radius: 50%;
+    display: inline-block;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    background-color: #45A62F;
+    font-size: 25px;
+    font-family: Rockwell;
+}
+
+.registration-words{
+    font-family: Rockwell;
+    color: #45A62F;
+}
+
+.checkout{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    position: relative;
+    left: 50px;
+}
+
+.checkout-circle{
+    height: 35px;
+    width: 35px;
+    border: 3px solid #45A62F;
+    border-radius: 50%;
+    display: inline-block;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #45A62F;
+    font-size: 25px;
+    font-family: Rockwell;
+}
+
+.checkout-words{
+    font-family: Rockwell;
+    color: #45A62F;
+}
+
+.selected-meals{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    position: relative;
+}
+
+.selected-meals-circle{
+    height: 35px;
+    width: 35px;
+    border: 3px solid #45A62F;
+    border-radius: 50%;
+    display: inline-block;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #45A62F;
+    font-size: 25px;
+    font-family: Rockwell;
+}
+
+.selected-meals-words{
+    font-family: Rockwell;
+    color: #45A62F;
+}
+
+.divider-one{
+    background-color: #45A62F;
+    height: 3px;
+    width: 250px;
+    position: relative;
+    top: 15px;
+    right: 14px;
+}
+
+.divider-two{
+    background-color: #45A62F;
+    height: 3px;
+    width: 250px;
+    position: relative;
+    top: 15px;
+    left: 20px;
+}
+
+.main-register{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    position: relative;
+    top: 140px;
+}
+
+.links-signin-up{
+    display: flex;
+    gap: 20px;
+}
+
+.form-register{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 50px;
+}
+
+.links-signin-up{
+    display: flex;
+    gap: 150px;
+    font-size: 30px;
+    font-family: PoorRichardOpti;
+    color: #45A62F;
+}
+
+.signin-link{
+    text-decoration: underline;
+}
+
+#label-signin{
+    font-size: 20px;
+    font-family: PoorRichardOpti;
+    color: #45A62F;
+    pointer-events: none;
+    position: relative;
+    top: 60px;
+}
+
+input:focus{
+    outline: none;
+    font-size: 20px;
+    font-family: PoorRichardOpti;
+    color: #45A62F;
+}
+
+
+#input-signin{
+    height: 30px;
+    width: 450px;
+    border: none;
+    border-bottom: 2px solid #45A62F;
+    font-size: 20px;
+    font-family: PoorRichardOpti;
+    color: #45A62F;
+}
+
+
+.buttons{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 60px;
+}
+
+.inputs{
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.btn-signin{
+    width: 200px;
+    height: 40px;
+    position: relative;
+    top: 30px;
+    border-radius: 20px;
+    border: 2px solid #45A62F;;
+    color: white;
+    font-size: 20px;
+    font-family: PoorRichardOpti;
+    background-color: #45A62F;
+    font-weight: 600;
+}
+
+.sign-out{
+    font-size: 25px;
+    text-decoration: underline;
+    color: #45A62F;
+    font-weight: 600;
+    position: relative;
+    top: 10px;
+}
