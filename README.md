@@ -76,7 +76,7 @@ open index.html
 
 ## 📄 License
 
-[Your License Here]
+[MIT License](https://github.com/mk23rd/Fewes?tab=MIT-1-ov-file)
 
 ## 🤝 Contributors
 
