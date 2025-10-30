@@ -1,5 +1,6 @@
 const cartApi = window.FewesCart;
 const helpers = window.FewesHelpers;
+const payments = window.FewesPayments;
 
 if (!cartApi) {
   console.error("FewesCart helpers are not available. Ensure shared/orders.js is loaded before checkout.js.");
@@ -25,6 +26,7 @@ const authActionButton = document.getElementById("auth-action");
 
 const SERVICE_FEE_RATE = 0.05;
 const SERVICE_FEE_MINIMUM = 1.5;
+const DISPLAY_CURRENCY = "ETB";
 
 if (submitButton) {
   submitButton.disabled = true;
@@ -33,7 +35,7 @@ if (submitButton) {
 const formatCurrency = (value) => {
   return value.toLocaleString(undefined, {
     style: "currency",
-    currency: "USD",
+    currency: DISPLAY_CURRENCY,
     minimumFractionDigits: 2,
     maximumFractionDigits: 2
   });
@@ -182,31 +184,64 @@ const handleFormSubmit = () => {
 
     submitButton.disabled = true;
     submitButton.textContent = "Submitting...";
+    let redirectingToPayment = false;
 
     try {
-      await cartApi.createOrder({
+      const order = await cartApi.createOrder({
         deliveryAddress: addressInput.value.trim(),
         contactPhone: phoneInput.value.trim(),
-        notes: notesInput.value.trim() || undefined
+        notes: notesInput.value.trim() || undefined,
+        customerName: nameInput.value.trim() || undefined,
+        customerEmail: emailInput.value.trim() || undefined
       });
 
-      showFeedback("success", "Order placed! We will email you with updates shortly.");
-      form.reset();
-      if (user.displayName) {
-        nameInput.value = user.displayName;
+      let orderFinalized = false;
+
+      if (payments?.initializeChapa) {
+        submitButton.textContent = "Redirecting to payment...";
+        try {
+          const initResponse = await payments.initializeChapa({
+            orderId: order.id,
+            returnUrl: window.location.href
+          });
+
+          if (initResponse?.checkoutUrl) {
+            redirectingToPayment = true;
+            window.location.href = initResponse.checkoutUrl;
+            return;
+          }
+
+          showFeedback("error", "Payment link is unavailable. Please try again.");
+        } catch (paymentError) {
+          const message =
+            paymentError instanceof Error ? paymentError.message : "Unable to start payment.";
+          showFeedback("error", `Order saved but payment failed to start: ${message}`);
+        }
+      } else {
+        showFeedback("success", "Order placed! We will email you with updates shortly.");
+        orderFinalized = true;
       }
-      if (user.email) {
-        emailInput.value = user.email;
-      }
-      if (user.phoneNumber) {
-        phoneInput.value = user.phoneNumber;
+
+      if (orderFinalized) {
+        form.reset();
+        if (user.displayName) {
+          nameInput.value = user.displayName;
+        }
+        if (user.email) {
+          emailInput.value = user.email;
+        }
+        if (user.phoneNumber) {
+          phoneInput.value = user.phoneNumber;
+        }
       }
     } catch (error) {
       const message = error instanceof Error ? error.message : "Unable to submit your order.";
       showFeedback("error", message);
     } finally {
-      submitButton.disabled = false;
-      submitButton.textContent = "Place Order";
+      if (!redirectingToPayment) {
+        submitButton.disabled = false;
+        submitButton.textContent = "Place Order";
+      }
     }
   });
 };
@@ -239,6 +274,9 @@ const setupAuthButton = () => {
       if (user.email) {
         emailInput.value = user.email;
         emailInput.readOnly = true;
+      }
+      if (user.phoneNumber && !phoneInput.value) {
+        phoneInput.value = user.phoneNumber;
       }
     } else {
       authActionButton.textContent = "Sign In";

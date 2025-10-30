@@ -116,7 +116,14 @@
     return user.getIdToken();
   };
 
-  const createOrder = async ({ deliveryAddress, contactPhone, scheduledFor, notes }) => {
+  const createOrder = async ({
+    deliveryAddress,
+    contactPhone,
+    scheduledFor,
+    notes,
+    customerName,
+    customerEmail
+  }) => {
     const items = readCart();
     if (!items.length) {
       throw new Error("Your cart is empty.");
@@ -135,6 +142,8 @@
       })),
       deliveryAddress,
       contactPhone,
+      customerName,
+      customerEmail,
       scheduledFor: scheduledFor || undefined,
       notes: notes || undefined
     };

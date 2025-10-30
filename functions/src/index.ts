@@ -5,6 +5,7 @@ import cors from "cors";
 import { appConfig } from "./config";
 import { requireAuth, requireRole } from "./auth";
 import { createOrder, getOrderById, listOrders, updateOrderStatus } from "./orders/controller";
+import { initializeChapaPayment, verifyChapaPayment } from "./payments/chapa";
 
 const app = express();
 
@@ -24,6 +25,12 @@ ordersRouter.get("/:id", getOrderById);
 ordersRouter.patch("/:id/status", requireRole("admin"), updateOrderStatus);
 
 app.use("/orders", requireAuth, ordersRouter);
+
+const paymentsRouter = express.Router();
+paymentsRouter.post("/chapa/initialize", initializeChapaPayment);
+paymentsRouter.post("/chapa/verify", verifyChapaPayment);
+
+app.use("/payments", requireAuth, paymentsRouter);
 
 export const api = functions
   .region(appConfig.defaultRegion)

@@ -10,6 +10,7 @@ A modern, responsive web application for an Ethiopian meal kit delivery service.
 - **Responsive Design**: Seamless experience across desktop, tablet, and mobile devices
 - **Smooth Animations**: Modern UI with fluid transitions and glassmorphism effects
 - **Ethiopian Language Support**: Bilingual interface (English/Amharic)
+- **Authenticated Profiles**: Firebase-powered login with Google support, profile dashboard, and order history
 
 ## 🛠️ Tech Stack
 
@@ -65,6 +66,7 @@ open index.html
 - **Menu** (`/Menu/`) - Full dish catalog with filtering by dietary preference
 - **Plans** (`/Plans/`) - Subscription options and pricing
 - **About** (`/About/`) - Company story and values
+- **Profile** (`/Profile/`) - Authenticated dashboard for user details, order history, and payment actions
 
 ## 🧱 Backend (Firebase)
 
@@ -75,7 +77,7 @@ The repo ships with Firebase Hosting and Cloud Functions scaffolding so the stat
 - **Install**: `cd functions && npm install` to pull backend dependencies.
 - **Local emulators**: From the repo root run `cd functions && npm run serve` (builds TypeScript, then launches Functions, Firestore, Auth, and Hosting emulators).
 - **Deploy**: `cd functions && npm run deploy` pushes only the Cloud Functions. Deploy hosting with `firebase deploy --only hosting`.
-- **Environment**: Optional overrides via `.env` in `functions/` (`ALLOWED_ORIGINS`, `ORDERS_COLLECTION`, `FUNCTION_REGION`). Default API base is `/api/...`.
+- **Environment**: Optional overrides via `.env` in `functions/` (`ALLOWED_ORIGINS`, `ORDERS_COLLECTION`, `FUNCTION_REGION`). Provide your Chapa credentials with `CHAPA_SECRET_KEY` (plus optional `CHAPA_CALLBACK_URL`, `CHAPA_RETURN_URL`, `CHAPA_CURRENCY`). Default API base is `/api/...`.
 
 > ⚠️ Cloud Functions require the Blaze (pay-as-you-go) plan. You can still run everything locally on the Spark free tier, but production deployment of the API endpoints needs billing enabled. If you must stay on Spark, consider calling Firestore directly from the frontend with strict security rules instead of deploying the Express API.
 
@@ -86,6 +88,8 @@ The repo ships with Firebase Hosting and Cloud Functions scaffolding so the stat
 - `GET /api/orders` – list orders for the authenticated user.
 - `GET /api/orders/:id` – retrieve a single order (owner or admin only).
 - `PATCH /api/orders/:id/status` – update order status (admin only).
+- `POST /api/payments/chapa/initialize` – start a Chapa checkout session for an order.
+- `POST /api/payments/chapa/verify` – verify a Chapa transaction and refresh the order payment state.
 
 ### Frontend Firebase Setup
 

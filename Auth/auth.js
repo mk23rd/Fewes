@@ -47,7 +47,7 @@
 
   const loginForm = document.querySelector("#login-form");
   if (loginForm) {
-    const defaultTarget = loginForm.dataset.redirect ?? "../Admin/index.html";
+    const defaultTarget = loginForm.dataset.redirect ?? "../Profile/index.html";
     const emailInput = loginForm.querySelector("input[type='email']");
     emailInput?.focus();
 
@@ -114,7 +114,7 @@
     }
 
     googleButton.addEventListener("click", async () => {
-      const target = loginForm?.dataset.redirect ?? "../Admin/index.html";
+  const target = loginForm?.dataset.redirect ?? "../Profile/index.html";
       googleButton.disabled = true;
       googleButton.textContent = "Connecting to Google…";
 
