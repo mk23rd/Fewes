@@ -66,6 +66,33 @@ open index.html
 - **Plans** (`/Plans/`) - Subscription options and pricing
 - **About** (`/About/`) - Company story and values
 
+## 🧱 Backend (Firebase)
+
+The repo ships with Firebase Hosting and Cloud Functions scaffolding so the static site can serve dynamic data (orders, auth) without additional infrastructure.
+
+- **Prerequisites**: Node.js 18+, Firebase CLI (`npm install -g firebase-tools`), and a Firebase project with Firestore, Authentication, and Storage enabled.
+- **Configure**: Update `.firebaserc` with your project ID or run `firebase use --add` inside the repo.
+- **Install**: `cd functions && npm install` to pull backend dependencies.
+- **Local emulators**: From the repo root run `cd functions && npm run serve` (builds TypeScript, then launches Functions, Firestore, Auth, and Hosting emulators).
+- **Deploy**: `cd functions && npm run deploy` pushes only the Cloud Functions. Deploy hosting with `firebase deploy --only hosting`.
+- **Environment**: Optional overrides via `.env` in `functions/` (`ALLOWED_ORIGINS`, `ORDERS_COLLECTION`, `FUNCTION_REGION`). Default API base is `/api/...`.
+
+> ⚠️ Cloud Functions require the Blaze (pay-as-you-go) plan. You can still run everything locally on the Spark free tier, but production deployment of the API endpoints needs billing enabled. If you must stay on Spark, consider calling Firestore directly from the frontend with strict security rules instead of deploying the Express API.
+
+### Available API Routes
+
+- `GET /api/health` – basic health check.
+- `POST /api/orders` – create an order (requires Firebase ID token).
+- `GET /api/orders` – list orders for the authenticated user.
+- `GET /api/orders/:id` – retrieve a single order (owner or admin only).
+- `PATCH /api/orders/:id/status` – update order status (admin only).
+
+### Frontend Firebase Setup
+
+- Paste the web app config snippet from Firebase Console → Project settings → General into `firebase-config.js` (placeholders provided).
+- Include the script in any page that needs Firebase services, e.g. `<script src="../firebase-config.js"></script>` right before your other Firebase-dependent scripts.
+- The config values are public identifiers, so they stay in this JS file; do not commit service-account JSON keys.
+
 ## 🌟 Key Highlights
 
 - 12+ authentic Ethiopian dishes

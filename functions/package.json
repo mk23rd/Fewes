@@ -1,0 +1,39 @@
+{
+  "name": "fewes-functions",
+  "description": "Cloud Functions backend for the Fewes meal kit application.",
+  "version": "0.1.0",
+  "private": true,
+  "engines": {
+    "node": "18"
+  },
+  "scripts": {
+    "build": "tsc",
+    "clean": "rimraf lib",
+    "dev": "tsx watch src/index.ts",
+    "emulators": "npm run build && firebase emulators:start --only functions,firestore,auth,hosting",
+    "lint": "eslint --ext .ts src",
+    "prepare": "npm run build",
+    "serve": "npm run emulators",
+    "deploy": "npm run build && firebase deploy --only functions"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "firebase-admin": "^12.5.0",
+    "firebase-functions": "^5.0.1"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.14.12",
+    "@typescript-eslint/eslint-plugin": "^7.18.0",
+    "@typescript-eslint/parser": "^7.18.0",
+    "eslint": "^8.57.0",
+    "eslint-config-prettier": "^9.1.0",
+    "firebase-tools": "^13.12.2",
+    "prettier": "^3.3.3",
+    "rimraf": "^6.0.1",
+    "tsx": "^4.16.6",
+    "typescript": "^5.5.4"
+  }
+}
