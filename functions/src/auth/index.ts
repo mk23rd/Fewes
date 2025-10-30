@@ -38,7 +38,11 @@ export const requireAuth = async (req: Request, res: Response, next: NextFunctio
   }
 };
 
-const extractRoles = (decoded: DecodedIdToken): string[] => {
+export const getRolesFromToken = (decoded?: DecodedIdToken): string[] => {
+  if (!decoded) {
+    return [];
+  }
+
   const claim = decoded.roles;
 
   if (Array.isArray(claim)) {
@@ -61,7 +65,7 @@ export const requireRole = (role: string) => {
       return;
     }
 
-    const roles = extractRoles(user);
+    const roles = getRolesFromToken(user);
     if (!roles.includes(role)) {
       res.status(403).json({ error: "Insufficient permissions." });
       return;

@@ -29,5 +29,14 @@ export const appConfig = {
     return fromEnv.length > 0 ? fromEnv : DEFAULT_ALLOWED_ORIGINS;
   })(),
   defaultRegion: env.FUNCTION_REGION ?? "us-central1",
-  ordersCollection: env.ORDERS_COLLECTION ?? "orders"
+  ordersCollection: env.ORDERS_COLLECTION ?? "orders",
+  payments: {
+    currency: env.CHAPA_CURRENCY ?? "ETB",
+    chapa: {
+      baseUrl: env.CHAPA_BASE_URL ?? "https://api.chapa.co",
+      secretKey: env.CHAPA_SECRET_KEY ?? "",
+      callbackUrl: env.CHAPA_CALLBACK_URL,
+      returnUrl: env.CHAPA_RETURN_URL
+    }
+  }
 };

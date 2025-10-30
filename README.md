@@ -93,6 +93,15 @@ The repo ships with Firebase Hosting and Cloud Functions scaffolding so the stat
 - Include the script in any page that needs Firebase services, e.g. `<script src="../firebase-config.js"></script>` right before your other Firebase-dependent scripts.
 - The config values are public identifiers, so they stay in this JS file; do not commit service-account JSON keys.
 
+### New Auth & Admin Pages
+
+- `Auth/login.html`, `Auth/signup.html` – Styled authentication screens wired to Firebase Email/Password auth via `Auth/auth.js`.
+- Google OAuth is available from the sign-in page; enable the **Google** provider in Firebase Console → Authentication → Sign-in method.
+- Run the static site locally with `npm install` then `npm run dev` (serves on `http://localhost:5173/Home/index.html`).
+- `Admin/index.html` – Admin dashboard for viewing every order and updating statuses (requires Firebase custom claim `roles: ['admin']`).
+- Admin routes call the Cloud Functions API (`/api/orders?scope=all`, `/api/orders/:id/status`); ensure your admin user has the `admin` role in Firebase Authentication before accessing.
+- Grant admin rights by running `firebase auth:import` with custom claims or calling a privileged script that sets `roles: ['admin']` on the user via the Admin SDK (e.g., `admin.auth().setCustomUserClaims(uid, { roles: ['admin'] })`).
+
 ## 🌟 Key Highlights
 
 - 12+ authentic Ethiopian dishes

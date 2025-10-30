@@ -1,13 +1,9 @@
 import type { RequestHandler } from "express";
-import {
-  DocumentData,
-  DocumentSnapshot,
-  FieldValue,
-  QueryDocumentSnapshot,
-  Timestamp
-} from "firebase-admin/firestore";
+import { DocumentData, DocumentSnapshot, FieldValue, Timestamp } from "firebase-admin/firestore";
+import type { Query } from "firebase-admin/firestore";
 
 import type { AuthedRequest } from "../auth";
+import { getRolesFromToken } from "../auth";
 import { appConfig } from "../config";
 import { firestore } from "../utils/firebaseAdmin";
 
@@ -30,39 +26,104 @@ export interface OrderPayload {
   items: OrderItem[];
   deliveryAddress: string;
   contactPhone: string;
+  customerName?: string;
+  customerEmail?: string;
   scheduledFor?: string;
   notes?: string;
 }
 
+export type PaymentStatus = "unpaid" | "pending" | "paid" | "failed";
+
+export interface OrderPricing {
+  subtotal: number;
+  serviceFee: number;
+  total: number;
+  currency: string;
+}
+
+export interface OrderPaymentDetails {
+  provider?: "chapa";
+  status: PaymentStatus;
+  txRef?: string;
+  checkoutUrl?: string;
+  receiptUrl?: string;
+  updatedAt?: string;
+}
+
 type FirestoreOrderRecord = {
   userId: string;
+  customerName?: string;
+  customerEmail?: string;
   status: OrderStatus;
   items: OrderItem[];
   deliveryAddress: string;
   contactPhone: string;
   scheduledFor?: Timestamp;
   notes?: string;
+  pricing: OrderPricing;
+  payment?: {
+    provider?: "chapa";
+    status: PaymentStatus;
+    txRef?: string;
+    checkoutUrl?: string;
+    receiptUrl?: string;
+    updatedAt?: Timestamp;
+  };
   createdAt: Timestamp;
   updatedAt: Timestamp;
 };
 
-const ordersCollection = firestore.collection(appConfig.ordersCollection);
+const SERVICE_FEE_RATE = 0.05;
+const SERVICE_FEE_MINIMUM = 1.5;
 
-const serializeOrder = (snapshot: DocumentSnapshot<DocumentData>) => {
+const calculatePricing = (items: OrderItem[]): OrderPricing => {
+  const subtotal = items.reduce((sum, item) => sum + item.unitPrice * item.quantity, 0);
+  const serviceFee = subtotal <= 0 ? 0 : Math.max(SERVICE_FEE_MINIMUM, subtotal * SERVICE_FEE_RATE);
+  const total = subtotal + serviceFee;
+
+  return {
+    subtotal: Number(subtotal.toFixed(2)),
+    serviceFee: Number(serviceFee.toFixed(2)),
+    total: Number(total.toFixed(2)),
+    currency: appConfig.payments.currency
+  };
+};
+
+export const ordersCollection = firestore.collection(appConfig.ordersCollection);
+
+export const serializeOrder = (snapshot: DocumentSnapshot<DocumentData>) => {
   const rawData = snapshot.data() as FirestoreOrderRecord | undefined;
 
   if (!rawData) {
     return null;
   }
 
+  const pricing = rawData.pricing ?? calculatePricing(rawData.items);
+  const payment: OrderPaymentDetails = rawData.payment
+    ? {
+        provider: rawData.payment.provider,
+        status: rawData.payment.status,
+        txRef: rawData.payment.txRef,
+        checkoutUrl: rawData.payment.checkoutUrl,
+        receiptUrl: rawData.payment.receiptUrl,
+        updatedAt: rawData.payment.updatedAt?.toDate().toISOString()
+      }
+    : {
+        status: "unpaid"
+      };
+
   return {
     id: snapshot.id,
     items: rawData.items,
     deliveryAddress: rawData.deliveryAddress,
     contactPhone: rawData.contactPhone,
+    customerName: rawData.customerName,
+    customerEmail: rawData.customerEmail,
     notes: rawData.notes,
     status: rawData.status,
     scheduledFor: rawData.scheduledFor?.toDate().toISOString(),
+    pricing,
+    payment,
     createdAt: rawData.createdAt.toDate().toISOString(),
     updatedAt: rawData.updatedAt.toDate().toISOString(),
     userId: rawData.userId
@@ -95,11 +156,11 @@ const parseOrderPayload = (incoming: unknown): OrderPayload | null => {
     return null;
   }
 
-  if (typeof candidate.deliveryAddress !== "string" || candidate.deliveryAddress.length === 0) {
+  if (typeof candidate.deliveryAddress !== "string" || candidate.deliveryAddress.trim().length === 0) {
     return null;
   }
 
-  if (typeof candidate.contactPhone !== "string" || candidate.contactPhone.length === 0) {
+  if (typeof candidate.contactPhone !== "string" || candidate.contactPhone.trim().length === 0) {
     return null;
   }
 
@@ -110,9 +171,23 @@ const parseOrderPayload = (incoming: unknown): OrderPayload | null => {
 
   const payload: OrderPayload = {
     items: normalizedItems,
-    deliveryAddress: candidate.deliveryAddress,
-    contactPhone: candidate.contactPhone
+    deliveryAddress: candidate.deliveryAddress.trim(),
+    contactPhone: candidate.contactPhone.trim()
   };
+
+  if (candidate.customerName && typeof candidate.customerName === "string") {
+    const name = candidate.customerName.trim();
+    if (name.length > 0) {
+      payload.customerName = name;
+    }
+  }
+
+  if (candidate.customerEmail && typeof candidate.customerEmail === "string") {
+    const email = candidate.customerEmail.trim();
+    if (email.length > 0) {
+      payload.customerEmail = email;
+    }
+  }
 
   if (candidate.notes && typeof candidate.notes === "string") {
     payload.notes = candidate.notes;
@@ -142,12 +217,24 @@ export const createOrder: RequestHandler = async (req, res) => {
     const scheduledFor = payload.scheduledFor
       ? Timestamp.fromDate(new Date(payload.scheduledFor))
       : undefined;
+    const customerName = payload.customerName ?? authed.user?.name ?? undefined;
+    const customerEmail = payload.customerEmail ?? authed.user?.email ?? undefined;
+    const pricing = calculatePricing(payload.items);
 
     const docRef = await ordersCollection.add({
-      ...payload,
-      scheduledFor,
       userId: authed.user.uid,
+      customerName,
+      customerEmail,
       status: "pending" as OrderStatus,
+      items: payload.items,
+      deliveryAddress: payload.deliveryAddress,
+      contactPhone: payload.contactPhone,
+      scheduledFor,
+      notes: payload.notes,
+      pricing,
+      payment: {
+        status: "unpaid" as PaymentStatus
+      },
       createdAt: now,
       updatedAt: now
     });
@@ -169,12 +256,32 @@ export const createOrder: RequestHandler = async (req, res) => {
 
 export const listOrders: RequestHandler = async (req, res) => {
   const authed = req as AuthedRequest;
+  const scope = typeof req.query.scope === "string" ? req.query.scope : undefined;
+  const roles = getRolesFromToken(authed.user);
+  const isAdmin = roles.includes("admin");
+
+  if (!authed.user) {
+    res.status(401).json({ error: "Authentication required." });
+    return;
+  }
 
   try {
-    const querySnapshot = await ordersCollection
-      .where("userId", "==", authed.user?.uid ?? "")
-      .orderBy("createdAt", "desc")
-      .get();
+    let query: Query<DocumentData>;
+
+    if (scope === "all") {
+      if (!isAdmin) {
+        res.status(403).json({ error: "Forbidden." });
+        return;
+      }
+
+      query = ordersCollection.orderBy("createdAt", "desc");
+    } else {
+      query = ordersCollection
+        .where("userId", "==", authed.user.uid)
+        .orderBy("createdAt", "desc");
+    }
+
+    const querySnapshot = await query.get();
 
     const orders = querySnapshot.docs
       .map((doc) => serializeOrder(doc))
@@ -205,12 +312,7 @@ export const getOrderById: RequestHandler = async (req, res) => {
     }
 
     const data = doc.data() as FirestoreOrderRecord;
-    const userRoles = authed.user?.roles;
-    const roles = Array.isArray(userRoles)
-      ? userRoles
-      : typeof userRoles === "string"
-      ? [userRoles]
-      : [];
+    const roles = getRolesFromToken(authed.user);
     const isAdmin = roles.includes("admin");
 
     if (data.userId !== authed.user?.uid && !isAdmin) {
