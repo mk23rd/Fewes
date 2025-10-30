@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fewes — Profile</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header class="profile-header">
+      <div class="profile-brand">
+        <div class="brand-badge">ፈ</div>
+        <div>
+          <h1>My Fewes</h1>
+          <p>Keep track of your details and meal kit orders.</p>
+        </div>
+      </div>
+      <nav class="profile-nav">
+        <a href="../Home/index.html">Home</a>
+        <a href="../Menu/index.html">Menu</a>
+        <a href="../Orders/checkout.html">Checkout</a>
+        <button id="sign-out" type="button">Sign Out</button>
+      </nav>
+    </header>
+
+    <main class="profile-layout">
+      <section class="profile-card" id="profile-card">
+        <div class="profile-avatar" id="profile-avatar">F</div>
+        <div class="profile-info">
+          <h2 id="profile-name">Loading...</h2>
+          <p id="profile-email" class="muted">—</p>
+          <div class="profile-meta">
+            <span id="profile-uid" class="chip">&nbsp;</span>
+            <span id="profile-provider" class="chip">&nbsp;</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="orders-section">
+        <div class="orders-heading">
+          <div>
+            <h2>Order History</h2>
+            <p class="muted">Review payments, status updates, and scheduled deliveries.</p>
+          </div>
+          <button id="refresh-orders" type="button" class="ghost-btn">Refresh</button>
+        </div>
+
+        <p id="orders-empty" class="orders-empty" hidden>
+          You have not placed any orders yet. Visit the menu to start building your cart.
+        </p>
+        <div id="orders-error" class="orders-error" hidden></div>
+        <div id="orders-list" class="orders-list" aria-live="polite"></div>
+      </section>
+    </main>
+
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+    <script src="../firebase-config.js"></script>
+    <script src="../shared/app.js"></script>
+    <script src="../shared/orders.js"></script>
+    <script src="../shared/payments.js"></script>
+    <script src="profile.js" type="module"></script>
+  </body>
+</html>

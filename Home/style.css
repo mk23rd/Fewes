@@ -116,6 +116,54 @@ a {
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+.menu-actions {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-top: 18px;
+}
+
+.menu-actions a {
+    font-family: Rockwell, Georgia, serif;
+    font-size: 16px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.menu-auth-link {
+    padding: 10px 22px;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    background: rgba(255, 255, 255, 0.18);
+    color: #ffffff;
+    font-weight: 600;
+    backdrop-filter: blur(6px);
+}
+
+.menu-auth-link:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateY(-1px);
+}
+
+.menu-auth-link.auth-signed-in {
+    background: rgba(16, 76, 44, 0.85);
+    border-color: rgba(16, 76, 44, 0.95);
+}
+
+.menu-signup {
+    padding: 11px 26px;
+    border-radius: 999px;
+    background: linear-gradient(135deg, #fff067, #ffd53b);
+    color: #1a1c03;
+    font-weight: 700;
+    box-shadow: 0 10px 24px rgba(255, 208, 63, 0.35);
+}
+
+.menu-signup:hover {
+    box-shadow: 0 14px 28px rgba(255, 208, 63, 0.45);
+    transform: translateY(-1px);
+}
+
 .Menu p {
     cursor: pointer;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);

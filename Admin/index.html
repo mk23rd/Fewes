@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fewes • Admin Dashboard</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <header>
+      <div class="brand">
+        <img src="../favicon.svg" alt="Fewes logo" />
+        <div>
+          <h1>Fewes Operations Center</h1>
+          <span>Monitor orders, track fulfillment, and keep customers happy.</span>
+        </div>
+      </div>
+      <div class="header-actions">
+        <span class="tag">Signed in as <strong id="admin-name">…</strong></span>
+        <button id="refresh-orders" type="button" class="secondary">Refresh</button>
+        <button id="sign-out" type="button">Sign out</button>
+      </div>
+    </header>
+
+    <main>
+      <summary-card></summary-card>
+      <section class="order-table" aria-live="polite">
+        <div id="orders" role="table"></div>
+      </section>
+    </main>
+
+    <div class="toast" role="status" aria-live="assertive"></div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+    <script src="../firebase-config.js"></script>
+    <script src="admin.js"></script>
+  </body>
+</html>

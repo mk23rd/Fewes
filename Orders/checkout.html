@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fewes — Checkout</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <header>
+      <div class="brand">
+        <img src="../Images/logo.jpg" alt="Fewes logo" />
+        <div>
+          <h1>Fewes Checkout</h1>
+          <span>Review your cart and confirm the order</span>
+        </div>
+      </div>
+      <nav>
+        <a href="../Home/index.html" class="secondary">Continue Shopping</a>
+  <button id="auth-action" class="secondary" type="button">Loading...</button>
+      </nav>
+    </header>
+
+    <main>
+      <section class="checkout-grid">
+        <article class="cart-card">
+          <div class="cart-header">
+            <h2>Your Cart</h2>
+            <button id="clear-cart" class="secondary" type="button">Clear</button>
+          </div>
+          <div id="cart-list" class="cart-list" aria-live="polite"></div>
+          <div id="empty-state" class="empty-state" hidden>
+            Your cart is empty. Add items from the menu to get started.
+          </div>
+        </article>
+
+        <aside class="summary-card">
+          <div class="summary-header">
+            <h2>Checkout</h2>
+          </div>
+          <div class="order-summary">
+            <div class="summary-row">
+              <span>Subtotal</span>
+              <span id="summary-subtotal">$0.00</span>
+            </div>
+            <div class="summary-row">
+              <span>Service Fee</span>
+              <span id="summary-fee">$0.00</span>
+            </div>
+            <div class="summary-row summary-total">
+              <span>Total</span>
+              <span id="summary-total">$0.00</span>
+            </div>
+          </div>
+
+          <form id="order-form" class="order-form" autocomplete="on">
+            <div>
+              <label for="customer-name">Full Name</label>
+              <input
+                type="text"
+                id="customer-name"
+                name="customerName"
+                placeholder="Jane Doe"
+                required
+              />
+            </div>
+            <div>
+              <label for="customer-email">Email</label>
+              <input
+                type="email"
+                id="customer-email"
+                name="email"
+                placeholder="you@example.com"
+                required
+              />
+            </div>
+            <div>
+              <label for="customer-phone">Phone</label>
+              <input
+                type="tel"
+                id="customer-phone"
+                name="phone"
+                placeholder="(555) 555-5555"
+                required
+              />
+            </div>
+            <div>
+              <label for="delivery-address">Delivery Address</label>
+              <textarea
+                id="delivery-address"
+                name="deliveryAddress"
+                placeholder="Street, unit, and city"
+                required
+              ></textarea>
+            </div>
+            <div>
+              <label for="delivery-notes">Delivery Notes</label>
+              <textarea
+                id="delivery-notes"
+                name="notes"
+                placeholder="Entrance code, allergies, or anything we should know"
+              ></textarea>
+            </div>
+            <button id="submit-order" class="submit-btn" type="submit">
+              Place Order
+            </button>
+            <div id="order-feedback" class="feedback" role="alert"></div>
+          </form>
+        </aside>
+      </section>
+    </main>
+
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+    <script src="../firebase-config.js"></script>
+    <script src="../shared/app.js"></script>
+    <script src="../shared/orders.js"></script>
+    <script src="../shared/payments.js"></script>
+    <script src="checkout.js" type="module"></script>
+  </body>
+</html>

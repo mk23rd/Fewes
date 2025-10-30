@@ -26,6 +26,17 @@
                             <a href="#specials"><p class="Nav-Jobs">SPECIALS</p></a>
                             <a href="../About/"><p class="Nav-About">ABOUT</p></a>
                         </nav>
+                        <div class="menu-actions">
+                            <a
+                              href="../Auth/login.html"
+                              class="menu-auth-link"
+                              data-auth-link
+                              data-auth-signed-out-text="LOG IN"
+                              data-auth-signed-in-text="MY PROFILE"
+                              data-auth-signed-in-href="../Profile/index.html"
+                            >LOG IN</a>
+                            <a href="../Auth/signup.html" class="menu-signup">SIGN UP</a>
+                        </div>
                         <div class="Yellow-Underline"></div>
                     </div>
                     <img src="./Food Images Top/Red_Spice.png" alt="" class="Red-Spice">
@@ -328,6 +339,11 @@
     </div>  
 
 </body>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="../firebase-config.js"></script>
+<script src="../shared/app.js"></script>
 <script src="jquery.js" type="text/javascript"></script>
 <script src="script.js"></script>
 
